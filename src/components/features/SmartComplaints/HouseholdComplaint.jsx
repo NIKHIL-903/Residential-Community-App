@@ -1,9 +1,11 @@
 import { useState, useRef } from 'react'
+import { useAuth } from '../../../context/AuthContext'
 
 /**
- * Household complaint form – text area, image upload (UI only), submit logs to console.
+ * Household complaint form – adds to app state (complaints). Image upload UI only.
  */
 export default function HouseholdComplaint() {
+  const { addComplaint } = useAuth()
   const [complaint, setComplaint] = useState('')
   const [fileNames, setFileNames] = useState([])
   const fileInputRef = useRef(null)
@@ -16,9 +18,10 @@ export default function HouseholdComplaint() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('Household complaint submitted:', {
-      complaint,
-      attachments: fileNames,
+    addComplaint({
+      type: 'Household',
+      description: complaint,
+      photoNames: fileNames,
     })
     setComplaint('')
     setFileNames([])

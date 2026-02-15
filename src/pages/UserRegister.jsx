@@ -4,16 +4,15 @@ import { useAuth } from '../context/AuthContext'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const MIN_PASSWORD_LENGTH = 6
-const ROLES = ['Resident', 'Technician', 'Admin']
 
 /**
- * User (Resident / Staff) registration – UI only.
- * Organization code is input only, not validated. No persistence.
- * On submit: redirect to Skill Profile Setup (mandatory before dashboard).
+ * Resident registration only.
+ * With valid Resident Code → Skill Profile Setup → Dashboard.
+ * Without Resident Code → Pending Admin Approval; after approval → Profile Setup → Dashboard.
  */
 export default function UserRegister() {
   const navigate = useNavigate()
-  const { register } = useAuth()
+  const { registerResident } = useAuth()
   const [form, setForm] = useState({
     orgCode: '',
     fullName: '',
@@ -23,6 +22,9 @@ export default function UserRegister() {
     block: '',
     floor: '',
     flatNumber: '',
+    residentCode: '',
+    familyMembers: '1',
+    vehicles: '',
     role: 'Resident',
   })
   const [errors, setErrors] = useState({})
@@ -33,6 +35,7 @@ export default function UserRegister() {
     if (!form.fullName.trim()) next.fullName = 'Full name is required.'
     if (!EMAIL_REGEX.test(form.email)) next.email = 'Please enter a valid email.'
     if (form.password.length < MIN_PASSWORD_LENGTH) next.password = `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`
+    if (!form.familyMembers || parseInt(form.familyMembers, 10) < 1) next.familyMembers = 'Number of family members must be at least 1.'
     setErrors(next)
     return Object.keys(next).length === 0
   }
@@ -40,8 +43,17 @@ export default function UserRegister() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!validate()) return
-    register(form)
-    navigate('/profile-setup', { replace: true })
+    const vehicles = form.vehicles ? form.vehicles.split(',').map((v) => v.trim()).filter(Boolean) : []
+    const result = registerResident({ ...form, vehicles })
+    if (!result.success) {
+      setErrors({ residentCode: result.error })
+      return
+    }
+    if (result.needsApproval) {
+      navigate('/pending-approval', { replace: true })
+    } else {
+      navigate('/profile-setup', { replace: true })
+    }
   }
 
   const update = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }))
@@ -50,8 +62,8 @@ export default function UserRegister() {
     <div className="min-h-screen bg-surface flex items-center justify-center p-6 md:p-8 py-8">
       <div className="w-full max-w-md">
         <div className="bg-card rounded-xl shadow-soft p-8 md:p-10">
-          <h1 className="text-2xl font-semibold text-ink mb-2">Create your account</h1>
-          <p className="text-slate-500 text-sm mb-8">Residents & staff</p>
+          <h1 className="text-2xl font-semibold text-ink mb-2">Resident registration</h1>
+          <p className="text-slate-500 text-sm mb-8">Create your resident account</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
@@ -64,6 +76,18 @@ export default function UserRegister() {
                 placeholder="Enter code from your community"
               />
               {errors.orgCode && <p className="mt-1.5 text-sm text-red-600">{errors.orgCode}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-ink mb-2">Resident Code (optional)</label>
+              <input
+                type="text"
+                value={form.residentCode}
+                onChange={update('residentCode')}
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none text-ink placeholder:text-slate-400"
+                placeholder="e.g. RC-ABC123 — leave blank if new family"
+              />
+              {errors.residentCode && <p className="mt-1.5 text-sm text-red-600">{errors.residentCode}</p>}
             </div>
 
             <div>
@@ -147,25 +171,33 @@ export default function UserRegister() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-ink mb-2">Role</label>
-              <select
-                value={form.role}
-                onChange={update('role')}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-card text-ink"
-              >
-                {ROLES.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
-                  </option>
-                ))}
-              </select>
+              <label className="block text-sm font-medium text-ink mb-2">Number of family members</label>
+              <input
+                type="number"
+                min="1"
+                value={form.familyMembers}
+                onChange={update('familyMembers')}
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none text-ink"
+              />
+              {errors.familyMembers && <p className="mt-1.5 text-sm text-red-600">{errors.familyMembers}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-ink mb-2">Vehicle registration numbers (comma-separated)</label>
+              <input
+                type="text"
+                value={form.vehicles}
+                onChange={update('vehicles')}
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none text-ink placeholder:text-slate-400"
+                placeholder="MH 12 AB 1234, MH 12 CD 5678"
+              />
             </div>
 
             <button
               type="submit"
               className="w-full py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
             >
-              Create account
+              Register as resident
             </button>
           </form>
 

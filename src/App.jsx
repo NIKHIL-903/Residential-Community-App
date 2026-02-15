@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import OrgRegister from './pages/OrgRegister'
 import UserRegister from './pages/UserRegister'
 import ProfileSetup from './pages/ProfileSetup'
+import PendingApproval from './pages/PendingApproval'
 
 // Dashboard (protected)
 import Dashboard from './pages/Dashboard'
@@ -27,6 +28,7 @@ export default function App() {
       <Route path="/register-org" element={<OrgRegister />} />
       <Route path="/register-user" element={<UserRegister />} />
       <Route path="/profile-setup" element={<ProfileSetup />} />
+      <Route path="/pending-approval" element={<PendingApproval />} />
       <Route
         path="/dashboard/*"
         element={

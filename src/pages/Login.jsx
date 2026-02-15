@@ -15,6 +15,7 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({})
+  const [loginError, setLoginError] = useState('')
 
   const validate = () => {
     const next = {}
@@ -26,9 +27,14 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    setLoginError('')
     if (!validate()) return
-    login(email, password)
-    navigate('/dashboard', { replace: true })
+    const success = login(email, password)
+    if (success) {
+      navigate('/dashboard', { replace: true })
+    } else {
+      setLoginError('No account found. Use Admin/Technician demo emails or register as resident first.')
+    }
   }
 
   return (
@@ -68,6 +74,9 @@ export default function Login() {
               />
               {errors.password && <p className="mt-1.5 text-sm text-red-600">{errors.password}</p>}
             </div>
+            {loginError && (
+              <p className="text-sm text-amber-600">{loginError} Demo: admin@sunriseheights.com (Admin), tech@sunriseheights.com (Technician), resident@sunriseheights.com (Resident).</p>
+            )}
 
             <button
               type="submit"

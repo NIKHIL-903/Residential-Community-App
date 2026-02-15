@@ -1,9 +1,11 @@
 import { useState, useRef } from 'react'
+import { useAuth } from '../../../context/AuthContext'
 
 /**
- * Vehicle complaint form – vehicle number, image upload (UI only), notes. Submit logs to console.
+ * Vehicle complaint form – adds to app state (complaints). Image upload UI only.
  */
 export default function VehicleComplaint() {
+  const { addComplaint } = useAuth()
   const [vehicleNumber, setVehicleNumber] = useState('')
   const [notes, setNotes] = useState('')
   const [fileNames, setFileNames] = useState([])
@@ -17,10 +19,11 @@ export default function VehicleComplaint() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('Vehicle complaint submitted:', {
-      vehicleNumber,
-      notes,
-      attachments: fileNames,
+    const description = [vehicleNumber && `Vehicle: ${vehicleNumber}`, notes].filter(Boolean).join(' · ')
+    addComplaint({
+      type: 'Vehicle',
+      description: description || 'Vehicle complaint',
+      photoNames: fileNames,
     })
     setVehicleNumber('')
     setNotes('')

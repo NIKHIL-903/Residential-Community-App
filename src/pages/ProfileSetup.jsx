@@ -31,7 +31,7 @@ function getMentorSkillOptions(domainSkills) {
 export default function ProfileSetup() {
   const navigate = useNavigate()
   const { pendingUser, completeProfileSetup } = useAuth()
-  const [basicInfo, setBasicInfo] = useState({ username: '', occupation: '', about: '' })
+  const [basicInfo, setBasicInfo] = useState({ username: '', occupation: '', about: '', achievements: '' })
   const [selectedDomains, setSelectedDomains] = useState([])
   const [domainSkills, setDomainSkills] = useState({})
   const [openToMentor, setOpenToMentor] = useState(false)
@@ -85,6 +85,7 @@ export default function ProfileSetup() {
     }))
     const profileData = {
       basicInfo: { ...basicInfo },
+      achievements: basicInfo.achievements || '',
       domainsWithSkills: baseDomainsWithSkills,
       openToMentor,
       mentorSkills: mentorSelected,
@@ -142,6 +143,16 @@ export default function ProfileSetup() {
                     rows={2}
                     className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none text-ink placeholder:text-slate-400"
                     placeholder="A short bio, similar to Instagram..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-2">Achievements (optional)</label>
+                  <input
+                    type="text"
+                    value={basicInfo.achievements}
+                    onChange={(e) => setBasicInfo((b) => ({ ...b, achievements: e.target.value }))}
+                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none text-ink placeholder:text-slate-400"
+                    placeholder="e.g. Certified in X, Award Y"
                   />
                 </div>
               </div>

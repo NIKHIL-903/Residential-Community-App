@@ -26,6 +26,11 @@ export default function Header() {
         </Link>
         <span className="text-slate-400">·</span>
         <span className="text-sm text-primary font-medium">{user?.communityName || 'Community'}</span>
+        {user?.residentCode && (
+          <span className="text-xs bg-surface text-slate-600 px-2.5 py-1 rounded-full font-mono">
+            {user.residentCode}
+          </span>
+        )}
         <span className="text-xs bg-accent/15 text-accent-dark px-2.5 py-1 rounded-full font-medium">
           {user?.role || 'Resident'}
         </span>
