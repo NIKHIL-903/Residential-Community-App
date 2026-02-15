@@ -47,9 +47,14 @@ export function AuthProvider({ children }) {
   // After approval: email -> { residentCode, familyMembersCount }
   const [approvedRegistrations, setApprovedRegistrations] = useState({})
   // residentCode -> familyMembersCount (max accounts for this code)
-  const [residentCodes, setResidentCodes] = useState({})
+  // TEMP: RC-DEMO01 allowed for testing – remove when no longer needed
+  const [residentCodes, setResidentCodes] = useState({
+    'RC-DEMO01': { familyMembersCount: 10 },
+  })
   // residentCode -> current usage count
-  const [codeUsageCount, setCodeUsageCount] = useState({})
+  const [codeUsageCount, setCodeUsageCount] = useState({
+    'RC-DEMO01': 0,
+  })
 
   // Complaints (UI-only). Status: Pending | In Progress | Resolved
   const [complaints, setComplaints] = useState([])

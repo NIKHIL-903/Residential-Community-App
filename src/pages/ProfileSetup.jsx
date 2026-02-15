@@ -161,7 +161,7 @@ export default function ProfileSetup() {
             {/* Interest Domains & Skills */}
             <section>
               <h2 className="text-lg font-medium text-ink mb-2">Interest Domains & Skills</h2>
-              <p className="text-sm text-slate-500 mb-4">Select one or more domains. For each, add skills (e.g. React L-4, Python L-5).</p>
+              <p className="text-sm text-slate-500 mb-4">Select one or more domains you are interested in. <br></br> For each domain, add relevant skills and specify your proficiency level on a scale of 1 to 5 using the format: Skill Name "L-level" <b>(e.g., React "L-4", Python "L-5")</b>.</p>
               {errors.domains && <p className="text-sm text-red-600 mb-2">{errors.domains}</p>}
               <div className="space-y-3">
                 {INTEREST_DOMAINS.map((domain) => (

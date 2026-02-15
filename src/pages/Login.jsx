@@ -42,7 +42,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="bg-card rounded-xl shadow-soft p-8 md:p-10">
           <h1 className="text-2xl font-semibold text-ink mb-2">Welcome back</h1>
-          <p className="text-slate-500 text-sm mb-8">Sign in to your community account</p>
+          <p className="text-slate-500 text-sm mb-8">Sign in to your  account</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
